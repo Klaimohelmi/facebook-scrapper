@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html >
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+<head>
+  
+  <meta charset="UTF-8">
+  <title>ML API</title>
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-page.css') }}">
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing-page.min.css') }}">
+  <!-- Custom fonts for this template -->
+
+ 
+</head>
+<body>
+
+
+ <div class="login">
+	<h1>Scrapp Facebook Page</h1>
+
+     <!-- Main Input For Receiving Query to our ML -->
+  
+     <script>
+      var socket = io.connect( 'http://' + document.domain + ':' + location.port )
+          // broadcast a message
+      socket.on( 'connect', function() {
+        socket.emit( 'my event', {
+          data: 'User Connected'
+        } )
+        var form = $( 'form' ).on( 'submit', function( e ) {
+          e.preventDefault()
+          let user_name = $( 'input.username' ).val()
+          let user_input = $( 'input.message' ).val()
+
+          socket.emit( 'my eventes', {
+            user_name : user_name,
+            message : user_input
+          } )
+          // empty the input field
+          $( 'input.message' ).val( '' ).focus()
+        } )
+      } )
+
+      // capture message
+      socket.on( 'my response', function( msg ) {
+        console.log( msg )
+        if( typeof msg.user_name !== 'undefined' ) {
+          $( 'h1' ).remove()
+          $( 'div.message_holder' ).append( '<div class="alert alert-success"><b style="color: #000">'+msg.user_name+'</b> '+msg.message+'</div>' )
+          $( 'div.message_holder' ).append( '<div class="alert alert-info"><b style="color: #000">'+msg.bot+'</b> '+msg.answer+'</div>' )
+        }
+      } )
+
+    </script>
+ 
+     <form method="POST">
+      Page Name : <input name="text">
+         Number of page : <input name="number">
+     
+
+      <button type="submit" class="btn btn-primary btn-block btn-large">Scrapp Now</button>
+    </form>
+
+     
+  
+
+ </div>
+
+
+</body>
+</html>
